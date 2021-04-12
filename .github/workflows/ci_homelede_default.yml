@@ -8,7 +8,7 @@
 # Description: Build OpenWrt using GitHub Actions
 #
 
-name: Build OpenWrt ljx 2021.03.22
+name: Build OpenWrt ljx 2021.04.12
 
 on:
   repository_dispatch:
@@ -17,7 +17,7 @@ on:
       ssh:
         description: 'SSH connection to Actions'
         required: false
-        default: 'true'
+        default: 'false'
 
 env:
   #REPO_URL: https://github.com/coolsnowwolf/lede
@@ -70,12 +70,11 @@ jobs:
         #git clone $REPO_URL -b $REPO_BRANCH openwrt
         #git clone https://github.com/xiaoqingfengATGH/HomeLede.git -b k5 HomeLede
         git clone $REPO_URL -b $REPO_BRANCH HomeLede
-        ln -sf HomeLede openwrt
-        cd HomeLede
-        git checkout -b k5 origin/k5
-        #ln -sf /workdir/HomeLede /workdir/openwrt
-        #ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
-        #ln -sf /workdir/openwrt $GITHUB_WORKSPACE/HomeLede
+        #cd HomeLede
+        #git checkout -b k5 origin/k5
+        ln -sf /workdir/HomeLede /workdir/openwrt
+        ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+        ln -sf /workdir/openwrt $GITHUB_WORKSPACE/HomeLede
 
 
     - name: Clone source code,ljx
