@@ -1,5 +1,3 @@
-/dts-v1/;
-
 #include "mt7621.dtsi"
 
 #include <dt-bindings/gpio/gpio.h>
@@ -10,14 +8,10 @@
 	model = "GB-PC1";
 
 	aliases {
-		led-boot = &led_status;
-		led-failsafe = &led_status;
-		led-running = &led_status;
-		led-upgrade = &led_status;
-	};
-
-	chosen {
-		bootargs = "console=ttyS0,57600";
+		led-boot = &led_system;
+		led-failsafe = &led_system;
+		led-running = &led_system;
+		led-upgrade = &led_system;
 	};
 
 	keys {
@@ -33,24 +27,26 @@
 	leds {
 		compatible = "gpio-leds";
 
-		system {
-			label = "gb-pc1:green:system";
+		ethblack_act {
+			label = "green:ethblack_act";
+			gpios = <&gpio 3 GPIO_ACTIVE_LOW>;
+		};
+
+		ethblue_act {
+			label = "green:ethblue_act";
+			gpios = <&gpio 4 GPIO_ACTIVE_LOW>;
+		};
+
+		power {
+			label = "green:power";
 			gpios = <&gpio 6 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "default-on";
 		};
 
-		led_status: status {
-			label = "gb-pc1:green:status";
+		led_system: system {
+			label = "green:system";
 			gpios = <&gpio 8 GPIO_ACTIVE_LOW>;
-		};
-
-		lan1 {
-			label = "gb-pc1:green:lan1";
-			gpios = <&gpio 24 GPIO_ACTIVE_LOW>;
-		};
-
-		lan2 {
-			label = "gb-pc1:green:lan2";
-			gpios = <&gpio 25 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "disk-activity";
 		};
 	};
 };
@@ -65,9 +61,8 @@
 	flash@0 {
 		compatible = "jedec,spi-nor";
 		reg = <0>;
-		spi-max-frequency = <80000000>;
+		spi-max-frequency = <50000000>;
 		broken-flash-reset;
-		m25p,fast-read;
 
 		partitions {
 			compatible = "fixed-partitions";
@@ -125,7 +120,7 @@
 
 &state_default {
 	gpio {
-		groups = "jtag", "rgmii2", "uart3", "wdt";
+		groups = "jtag", "uart3", "wdt";
 		function = "gpio";
 	};
 };

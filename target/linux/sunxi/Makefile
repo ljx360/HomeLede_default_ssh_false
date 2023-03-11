@@ -1,9 +1,6 @@
+# SPDX-License-Identifier: GPL-2.0-only
 #
 # Copyright (C) 2013-2016 OpenWrt.org
-#
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
 
 include $(TOPDIR)/rules.mk
 
@@ -12,9 +9,10 @@ BOARD:=sunxi
 BOARDNAME:=Allwinner A1x/A20/A3x/H3/H5/R40
 FEATURES:=fpu usb ext4 display rtc squashfs
 SUBTARGETS:=cortexa8 cortexa7 cortexa53
-MAINTAINER:=Zoltan HERPAI <wigyori@uid0.hu>
 
-KERNEL_PATCHVER:=5.4
+KERNEL_PATCHVER:=5.10
+KERNEL_TESTING_PATCHVER:=5.4
+
 KERNELNAME:=zImage dtbs
 
 # A10: Cortex-A8

@@ -1,10 +1,18 @@
+# SPDX-License-Identifier: GPL-2.0-only
 #
 # Copyright (C) 2012-2016 OpenWrt.org
 # Copyright (C) 2016 LEDE-project.org
-#
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
+
+define Device/dsa-migration
+  DEVICE_COMPAT_VERSION := 1.1
+  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
+endef
+
+define Device/kernel-size-migration
+  DEVICE_COMPAT_VERSION := 2.0
+  DEVICE_COMPAT_MESSAGE := Partition design has changed compared to older versions (up to 19.07) due to kernel size restrictions. \
+	Upgrade via sysupgrade mechanism is not possible, so new installation via factory style image is required.
+endef
 
 define Device/buffalo_ls421de
   $(Device/NAND-128K)
@@ -23,21 +31,39 @@ define Device/buffalo_ls421de
 endef
 TARGET_DEVICES += buffalo_ls421de
 
+define Device/ctera_c200-v2
+  PAGESIZE := 2048
+  SUBPAGESIZE := 512
+  BLOCKSIZE := 128k
+  DEVICE_VENDOR := Ctera
+  DEVICE_MODEL := C200
+  DEVICE_VARIANT := V2
+  SOC := armada-370
+  KERNEL := kernel-bin | append-dtb | uImage none | ctera-firmware
+  KERNEL_IN_UBI :=
+  KERNEL_SUFFIX := -factory.firm
+  DEVICE_PACKAGES :=  \
+    kmod-gpio-button-hotplug kmod-hwmon-drivetemp kmod-hwmon-nct7802 \
+    kmod-rtc-s35390a kmod-usb3 kmod-usb-ledtrig-usbport
+  IMAGES := sysupgrade.bin
+endef
+TARGET_DEVICES += ctera_c200-v2
+
 define Device/cznic_turris-omnia
   DEVICE_VENDOR := CZ.NIC
   DEVICE_MODEL := Turris Omnia
   KERNEL_INSTALL := 1
+  SOC := armada-385
   KERNEL := kernel-bin
-  KERNEL_INITRAMFS := kernel-bin
+  KERNEL_INITRAMFS := kernel-bin | gzip | fit gzip $$(KDIR)/image-$$(DEVICE_DTS).dtb
   DEVICE_PACKAGES :=  \
     mkf2fs e2fsprogs kmod-fs-vfat kmod-nls-cp437 kmod-nls-iso8859-1 \
     wpad-basic-wolfssl kmod-ath9k kmod-ath10k-ct ath10k-firmware-qca988x-ct \
-    partx-utils kmod-i2c-mux-pca954x
-  IMAGES := $$(IMAGE_PREFIX)-sysupgrade.img.gz omnia-medkit-$$(IMAGE_PREFIX)-initramfs.tar.gz
-  IMAGE/$$(IMAGE_PREFIX)-sysupgrade.img.gz := boot-scr | boot-img | sdcard-img | gzip | append-metadata
-  IMAGE/omnia-medkit-$$(IMAGE_PREFIX)-initramfs.tar.gz := omnia-medkit-initramfs | gzip
-  IMAGE_NAME = $$(2)
-  SOC := armada-385
+    partx-utils kmod-i2c-mux-pca954x kmod-leds-turris-omnia
+  IMAGES := $$(DEVICE_IMG_PREFIX)-sysupgrade.img.gz omnia-medkit-$$(DEVICE_IMG_PREFIX)-initramfs.tar.gz
+  IMAGE/$$(DEVICE_IMG_PREFIX)-sysupgrade.img.gz := boot-scr | boot-img | sdcard-img | gzip | append-metadata
+  IMAGE/omnia-medkit-$$(DEVICE_IMG_PREFIX)-initramfs.tar.gz := omnia-medkit-initramfs | gzip
+  DEVICE_IMG_NAME = $$(2)
   SUPPORTED_DEVICES += armada-385-turris-omnia
   BOOT_SCRIPT := turris-omnia
 endef
@@ -51,6 +77,20 @@ define Device/globalscale_mirabox
   SUPPORTED_DEVICES += mirabox
 endef
 TARGET_DEVICES += globalscale_mirabox
+
+define Device/iptime_nas1dual
+  DEVICE_VENDOR := ipTIME
+  DEVICE_MODEL := NAS1dual
+  DEVICE_PACKAGES := kmod-hwmon-drivetemp kmod-hwmon-gpiofan kmod-usb3
+  SOC := armada-385
+  KERNEL := kernel-bin | append-dtb | iptime-naspkg nas1dual
+  KERNEL_SIZE := 6144k
+  IMAGES := sysupgrade.bin
+  IMAGE_SIZE := 64256k
+  IMAGE/sysupgrade.bin := append-kernel | pad-to $$(KERNEL_SIZE) | \
+	append-rootfs | pad-rootfs | check-size | append-metadata
+endef
+TARGET_DEVICES += iptime_nas1dual
 
 define Device/kobol_helios4
   DEVICE_VENDOR := Kobol
@@ -78,6 +118,7 @@ endef
 
 define Device/linksys_wrt1200ac
   $(call Device/linksys)
+  $(Device/dsa-migration)
   DEVICE_MODEL := WRT1200AC
   DEVICE_ALT0_VENDOR := Linksys
   DEVICE_ALT0_MODEL := Caiman
@@ -89,6 +130,7 @@ TARGET_DEVICES += linksys_wrt1200ac
 
 define Device/linksys_wrt1900acs
   $(call Device/linksys)
+  $(Device/dsa-migration)
   DEVICE_MODEL := WRT1900ACS
   DEVICE_VARIANT := v1
   DEVICE_ALT0_VENDOR := Linksys
@@ -104,20 +146,21 @@ TARGET_DEVICES += linksys_wrt1900acs
 
 define Device/linksys_wrt1900ac-v1
   $(call Device/linksys)
+  $(Device/kernel-size-migration)
   DEVICE_MODEL := WRT1900AC
   DEVICE_VARIANT := v1
   DEVICE_ALT0_VENDOR := Linksys
   DEVICE_ALT0_MODEL := Mamba
   DEVICE_DTS := armada-xp-linksys-mamba
   DEVICE_PACKAGES += mwlwifi-firmware-88w8864
-  KERNEL_SIZE := 3072k
+  KERNEL_SIZE := 4096k
   SUPPORTED_DEVICES += armada-xp-linksys-mamba linksys,mamba
-  DEFAULT := n
 endef
 TARGET_DEVICES += linksys_wrt1900ac-v1
 
 define Device/linksys_wrt1900ac-v2
   $(call Device/linksys)
+  $(Device/dsa-migration)
   DEVICE_MODEL := WRT1900AC
   DEVICE_VARIANT := v2
   DEVICE_ALT0_VENDOR := Linksys
@@ -130,6 +173,7 @@ TARGET_DEVICES += linksys_wrt1900ac-v2
 
 define Device/linksys_wrt3200acm
   $(call Device/linksys)
+  $(Device/dsa-migration)
   DEVICE_MODEL := WRT3200ACM
   DEVICE_ALT0_VENDOR := Linksys
   DEVICE_ALT0_MODEL := Rango
@@ -141,15 +185,15 @@ TARGET_DEVICES += linksys_wrt3200acm
 
 define Device/linksys_wrt32x
   $(call Device/linksys)
+  $(Device/kernel-size-migration)
   DEVICE_MODEL := WRT32X
   DEVICE_ALT0_VENDOR := Linksys
   DEVICE_ALT0_MODEL := Venom
   DEVICE_DTS := armada-385-linksys-venom
   DEVICE_PACKAGES += kmod-btmrvl kmod-mwifiex-sdio mwlwifi-firmware-88w8964
-  KERNEL_SIZE := 3072k
+  KERNEL_SIZE := 6144k
   KERNEL := kernel-bin | append-dtb
   SUPPORTED_DEVICES += armada-385-linksys-venom linksys,venom
-  DEFAULT := n
 endef
 TARGET_DEVICES += linksys_wrt32x
 
@@ -237,10 +281,13 @@ define Device/solidrun_clearfog-base-a1
   UBOOT := clearfog-u-boot-spl.kwb
   BOOT_SCRIPT := clearfog
   SUPPORTED_DEVICES += armada-388-clearfog-base
+  DEVICE_COMPAT_VERSION := 1.1
+  DEVICE_COMPAT_MESSAGE := Ethernet interface rename has been dropped
 endef
 TARGET_DEVICES += solidrun_clearfog-base-a1
 
 define Device/solidrun_clearfog-pro-a1
+  $(Device/dsa-migration)
   DEVICE_VENDOR := SolidRun
   DEVICE_MODEL := ClearFog Pro
   KERNEL_INSTALL := 1

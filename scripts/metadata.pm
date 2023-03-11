@@ -158,6 +158,10 @@ sub parse_target_metadata($) {
 		};
 		/^Target-Profile-Packages:\s*(.*)\s*$/ and $profile->{packages} = [ split(/\s+/, $1) ];
 		/^Target-Profile-Description:\s*(.*)\s*/ and $profile->{desc} = get_multiline(*FILE);
+		/^Target-Profile-Broken:\s*(.+)\s*$/ and do {
+			$profile->{broken} = 1;
+			$profile->{default} = "n";
+		};
 		/^Target-Profile-Default:\s*(.+)\s*$/ and $profile->{default} = $1;
 	}
 	close FILE;
@@ -245,7 +249,6 @@ sub parse_package_metadata($) {
 		/^Build-Types:\s*(.+)\s*$/ and $src->{buildtypes} = [ split /\s+/, $1 ];
 		next unless $pkg;
 		/^Version: \s*(.+)\s*$/ and $pkg->{version} = $1;
-		/^ABIVersion: \s*(.+)\s*$/ and $pkg->{abiversion} = $1;
 		/^Title: \s*(.+)\s*$/ and $pkg->{title} = $1;
 		/^Menu: \s*(.+)\s*$/ and $pkg->{menu} = $1;
 		/^Submenu: \s*(.+)\s*$/ and $pkg->{submenu} = $1;
@@ -287,16 +290,23 @@ sub parse_package_metadata($) {
 		};
 		/^Config:\s*(.*)\s*$/ and $pkg->{config} = "$1\n".get_multiline(*FILE, "\t");
 		/^Prereq-Check:/ and $pkg->{prereq} = 1;
+		/^Maintainer: \s*(.+)\s*$/ and $pkg->{maintainer} = [ split /, /, $1 ];
 		/^Require-User:\s*(.*?)\s*$/ and do {
 			my @ugspecs = split /\s+/, $1;
 
 			for my $ugspec (@ugspecs) {
-				my @ugspec = split /:/, $ugspec, 2;
+				my @ugspec = split /:/, $ugspec, 3;
 				if ($ugspec[0]) {
 					parse_package_metadata_usergroup($src->{makefile}, "user", \%usernames, \%userids, $ugspec[0]) or return 0;
 				}
 				if ($ugspec[1]) {
 					parse_package_metadata_usergroup($src->{makefile}, "group", \%groupnames, \%groupids, $ugspec[1]) or return 0;
+				}
+				if ($ugspec[2]) {
+					my @addngroups = split /,/, $ugspec[2];
+					for my $addngroup (@addngroups) {
+						parse_package_metadata_usergroup($src->{makefile}, "group", \%groupnames, \%groupids, $addngroup) or return 0;
+					}
 				}
 			}
 		};

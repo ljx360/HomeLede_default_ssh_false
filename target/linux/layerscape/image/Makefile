@@ -1,9 +1,7 @@
+# SPDX-License-Identifier: GPL-2.0-only
 #
 # Copyright (C) 2016 Jiang Yutang <jiangyutang1978@gmail.com>
-#
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
+
 include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/image.mk
 
@@ -38,7 +36,9 @@ endef
 define Build/ls-append-kernel
 	mkdir -p $@.tmp && \
 	cp $(IMAGE_KERNEL) $@.tmp/fitImage && \
-	make_ext4fs -J -L kernel -l "$(LS_SD_KERNELPART_SIZE)M" "$@.kernel.part" "$@.tmp" && \
+	make_ext4fs -J -L kernel -l "$(LS_SD_KERNELPART_SIZE)M" \
+		$(if $(SOURCE_DATE_EPOCH),-T $(SOURCE_DATE_EPOCH)) \
+		"$@.kernel.part" "$@.tmp" && \
 	dd if=$@.kernel.part >> $@ && \
 	rm -rf $@.tmp && \
 	rm -f $@.kernel.part
@@ -78,9 +78,5 @@ define Device/rework-sdcard-images
 endef
 
 include $(SUBTARGET).mk
-
-ifeq ($(SUBTARGET),armv7)
-include armv7.mk
-endif
 
 $(eval $(call BuildImage))

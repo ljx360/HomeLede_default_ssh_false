@@ -9,15 +9,15 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=uboot-envtools
 PKG_DISTNAME:=u-boot
-PKG_VERSION:=2020.04
-PKG_RELEASE:=8
+PKG_VERSION:=2023.01
+PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_DISTNAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:= \
     https://ftp.denx.de/pub/u-boot \
     https://mirror.cyberbits.eu/u-boot \
     ftp://ftp.denx.de/pub/u-boot
-PKG_HASH:=fe732aaf037d9cc3c0909bad8362af366ae964bbdac6913a34081ff4ad565372
+PKG_HASH:=69423bad380f89a0916636e89e6dcbd2e4512d584308d922d1039d1e4331950f
 PKG_SOURCE_SUBDIR:=$(PKG_DISTNAME)-$(PKG_VERSION)
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_DISTNAME)-$(PKG_VERSION)
 
@@ -61,18 +61,25 @@ MAKE_FLAGS += \
 define Package/uboot-envtools/conffiles
 /etc/config/ubootenv
 /etc/fw_env.config
+/etc/fw_sys.config
 endef
 
 define Package/uboot-envtools/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/tools/env/fw_printenv $(1)/usr/sbin
 	$(LN) fw_printenv $(1)/usr/sbin/fw_setenv
+	$(INSTALL_BIN) ./files/fw_printsys $(1)/usr/sbin
+	$(INSTALL_BIN) ./files/fw_setsys $(1)/usr/sbin
 	$(INSTALL_DIR) $(1)/lib
 	$(INSTALL_DATA) ./files/uboot-envtools.sh $(1)/lib
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
-	$(if $(wildcard ./files/$(BOARD)), \
-		$(INSTALL_DATA) ./files/$(BOARD) \
-		$(1)/etc/uci-defaults/30_uboot-envtools \
+	$(if $(wildcard ./files/$(BOARD)_$(SUBTARGET)), \
+		$(INSTALL_DATA) ./files/$(BOARD)_$(SUBTARGET) \
+		$(1)/etc/uci-defaults/30_uboot-envtools, \
+		$(if $(wildcard ./files/$(BOARD)), \
+			$(INSTALL_DATA) ./files/$(BOARD) \
+			$(1)/etc/uci-defaults/30_uboot-envtools \
+		) \
 	)
 endef
 

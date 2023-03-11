@@ -1,16 +1,19 @@
 src-git packages https://github.com/xiaoqingfengATGH/feeds-packages
 src-git luci https://github.com/xiaoqingfengATGH/feeds-luci
-src-git routing https://github.com/xiaoqingfengATGH/k5-feeds-routing
-src-git telephony https://github.com/xiaoqingfengATGH/k5-feeds-telephony
-src-git freifunk https://github.com/xiaoqingfengATGH/k5-feeds-freifunk
-# lienol's repo is splitted into two repo now
-src-git lienol https://github.com/homelede/openwrt-package.git
-src-git pw https://github.com/homelede/openwrt-passwall.git
+src-git routing https://github.com/coolsnowwolf/routing
+src-git telephony https://git.openwrt.org/feed/telephony.git
+src-git pwluci https://github.com/homelede/openwrt-passwall.git;luci
+src-git pw https://github.com/homelede/openwrt-passwall.git;packages
 src-git xiaoqingfeng https://github.com/xiaoqingfengATGH/feeds-xiaoqingfeng
-#src-git helloworld https://github.com/fw876/helloworld
+src-git lienol https://github.com/homelede/openwrt-package.git;main
 # luci-theme-infinityfreedom
 src-git infinityfreedom https://github.com/xiaoqingfengATGH/luci-theme-infinityfreedom.git
 # homeclash
 src-git homeclash https://github.com/xiaoqingfengATGH/homeclash.git
 # strongswanInDocker
 src-git strongswanInDocker https://github.com/xiaoqingfengATGH/luci-app-strongswanInDocker.git
+
+#src-git video https://github.com/openwrt/video.git
+#src-git targets https://github.com/openwrt/targets.git
+#src-git oldpackages http://git.openwrt.org/packages.git
+#src-link custom /usr/src/openwrt/custom-feed

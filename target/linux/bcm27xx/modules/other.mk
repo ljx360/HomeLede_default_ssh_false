@@ -1,26 +1,23 @@
+# SPDX-License-Identifier: GPL-2.0-only
 #
 # Copyright (C) 2019 OpenWrt.org
-#
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
 
-define KernelPackage/pwm-bcm2835
+define KernelPackage/pwm-raspberrypi-poe
   SUBMENU:=$(OTHER_MENU)
-  TITLE:=BCM2835 PWM driver
+  TITLE:=Raspberry Pi Firwmware PoE Hat PWM support
   KCONFIG:= \
     CONFIG_PWM=y \
-    CONFIG_PWM_BCM2835
-  FILES:=$(LINUX_DIR)/drivers/pwm/pwm-bcm2835.ko
-  AUTOLOAD:=$(call AutoLoad,60,pwm-bcm2835)
-  DEPENDS:=@TARGET_bcm27xx
+    CONFIG_PWM_RASPBERRYPI_POE
+  FILES:=$(LINUX_DIR)/drivers/pwm/pwm-raspberrypi-poe.ko
+  AUTOLOAD:=$(call AutoLoad,20,pwm-raspberrypi-poe)
+  DEPENDS:=@TARGET_bcm27xx @LINUX_5_15 +kmod-hwmon-pwmfan
 endef
 
-define KernelPackage/pwm-bcm2835/description
-  This package contains the PWM framework driver for BCM2835 controller (Raspberry Pi)
+define KernelPackage/pwm-raspberrypi-poe/description
+  This package provides Raspberry Pi Firwmware PoE Hat PWM support
 endef
 
-$(eval $(call KernelPackage,pwm-bcm2835))
+$(eval $(call KernelPackage,pwm-raspberrypi-poe))
 
 
 define KernelPackage/smi-bcm2835

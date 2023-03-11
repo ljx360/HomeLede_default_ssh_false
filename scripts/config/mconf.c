@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+// SPDX-License-Identifier: GPL-2.0-only
 /*
  * Copyright (C) 2002 Roman Zippel <zippel@linux-m68k.org>
  *
@@ -22,12 +22,17 @@
 #include "lkc.h"
 #include "lxdialog/dialog.h"
 
+#define JUMP_NB			9
+
 static const char mconf_readme[] =
+"OpenWrt config is based on Kernel kconfig\n"
+"so ipkg packages are referred here as modules.\n"
+"\n"
 "Overview\n"
 "--------\n"
-"Some OpenWrt features may be built directly into the image.\n"
-"Some may be made into installable ipkg packages (referred here as\n"
-"modules). Some features may be completely removed altogether.\n"
+"This interface lets you select features and parameters for the build.\n"
+"Features can either be built-in, modularized, or ignored. Parameters\n"
+"must be entered in as decimal or hexadecimal numbers or text.\n"
 "\n"
 "Menu items beginning with following braces represent features that\n"
 "  [ ] can be built in or removed\n"
@@ -297,17 +302,12 @@ static char filename[PATH_MAX+1];
 static void set_config_filename(const char *config_filename)
 {
 	static char menu_backtitle[PATH_MAX+128];
-	int size;
 
-	size = snprintf(menu_backtitle, sizeof(menu_backtitle),
-			"%s - %s", config_filename, rootmenu.prompt->text);
-	if (size >= sizeof(menu_backtitle))
-		menu_backtitle[sizeof(menu_backtitle)-1] = '\0';
+	snprintf(menu_backtitle, sizeof(menu_backtitle), "%s - %s",
+		 config_filename, rootmenu.prompt->text);
 	set_dialog_backtitle(menu_backtitle);
 
-	size = snprintf(filename, sizeof(filename), "%s", config_filename);
-	if (size >= sizeof(filename))
-		filename[sizeof(filename)-1] = '\0';
+	snprintf(filename, sizeof(filename), "%s", config_filename);
 }
 
 struct subtitle_part {
@@ -918,7 +918,7 @@ static void conf_load(void)
 				return;
 			if (!conf_read(dialog_input_result)) {
 				set_config_filename(dialog_input_result);
-				sym_set_change_count(1);
+				conf_set_changed(true);
 				return;
 			}
 			show_textbox(NULL, "File does not exist!", 5, 38);

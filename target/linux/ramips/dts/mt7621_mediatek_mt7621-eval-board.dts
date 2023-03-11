@@ -1,14 +1,8 @@
-/dts-v1/;
-
 #include "mt7621.dtsi"
 
 / {
 	compatible = "mediatek,mt7621-eval-board", "mediatek,mt7621-soc";
 	model = "Mediatek MT7621 evaluation board";
-
-	chosen {
-		bootargs = "console=ttyS0,57600";
-	};
 };
 
 &nand {
@@ -76,7 +70,7 @@
 
 &state_default {
 	gpio {
-		groups = "i2c", "uart2", "uart3", "rgmii2", "sdhci";
+		groups = "i2c", "uart2", "uart3", "sdhci";
 		function = "gpio";
 	};
 };

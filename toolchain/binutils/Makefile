@@ -15,20 +15,20 @@ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 
 TAR_OPTIONS += --exclude='*.rej'
 
-ifeq ($(PKG_VERSION),2.29.1)
-  PKG_HASH:=e7010a46969f9d3e53b650a518663f98a5dde3c3ae21b7d71e5e6803bc36b577
+ifeq ($(PKG_VERSION),2.37)
+  PKG_HASH:=820d9724f020a3e69cb337893a0b63c2db161dadcb0e06fc11dc29eb1e84a32c
 endif
 
-ifeq ($(PKG_VERSION),2.31.1)
-  PKG_HASH:=5d20086ecf5752cc7d9134246e9588fa201740d540f7eb84d795b1f7a93bca86
+ifeq ($(PKG_VERSION),2.38)
+  PKG_HASH:=e316477a914f567eccc34d5d29785b8b0f5a10208d36bbacedcc39048ecfe024
 endif
 
-ifeq ($(PKG_VERSION),2.32)
-  PKG_HASH:=0ab6c55dd86a92ed561972ba15b9b70a8b9f75557f896446c82e8b36e473ee04
+ifeq ($(PKG_VERSION),2.39)
+  PKG_HASH:=645c25f563b8adc0a81dbd6a41cffbf4d37083a382e02d5d3df4f65c09516d00
 endif
 
-ifeq ($(PKG_VERSION),2.34)
-  PKG_HASH:=f00b0e8803dc9bab1e2165bd568528135be734df3fabf8d0161828cd56028952
+ifeq ($(PKG_VERSION),2.40)
+  PKG_HASH:=0f8a4c272d7f17f369ded10a4aca28b8e304828e95526da482b0ccc4dfc9d8e1
 endif
 
 HOST_BUILD_PARALLEL:=1
@@ -66,6 +66,9 @@ ifneq ($(CONFIG_EXTRA_TARGET_ARCH),)
   HOST_CONFIGURE_ARGS+= \
 		--enable-targets=$(call qstrip,$(CONFIG_EXTRA_TARGET_ARCH_NAME))-linux-$(TARGET_SUFFIX)
 endif
+
+HOST_CONFIGURE_VARS += \
+	acx_cv_cc_gcc_supports_ada=false
 
 define Host/Prepare
 	$(call Host/Prepare/Default)

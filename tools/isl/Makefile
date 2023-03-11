@@ -7,11 +7,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=isl
-PKG_VERSION:=0.20
+PKG_VERSION:=0.25
 
-PKG_SOURCE_URL:=http://isl.gforge.inria.fr
+PKG_SOURCE_URL:=https://libisl.sourceforge.io/
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
-PKG_HASH:=a5596a9fb8a5b365cb612e4b9628735d6e67e9178fae134a816ae195017e77aa
+PKG_HASH:=be7b210647ccadf90a2f0b000fca11a4d40546374a850db67adb32fad4b230d9
 
 HOST_BUILD_PARALLEL:=1
 
@@ -23,5 +23,9 @@ HOST_CONFIGURE_ARGS += \
 	--enable-static \
 	--disable-shared \
 	--with-gmp-prefix=$(STAGING_DIR_HOST)
+
+define Host/Uninstall
+	-$(call Host/Compile/Default,uninstall)
+endef
 
 $(eval $(call HostBuild))

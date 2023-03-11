@@ -34,24 +34,6 @@ define Package/brcmfmac-firmware-4329-sdio/install
 endef
 $(eval $(call BuildPackage,brcmfmac-firmware-4329-sdio))
 
-Package/brcmfmac-firmware-43362-sdio = $(call Package/firmware-default,Broadcom BCM43362 FullMac SDIO firmware)
-define Package/brcmfmac-firmware-43362-sdio/install
-	$(INSTALL_DIR) $(1)/lib/firmware/brcm
-	$(INSTALL_DATA) \
-		$(PKG_BUILD_DIR)/brcm/brcmfmac43362-sdio.bin \
-		$(1)/lib/firmware/brcm/brcmfmac43362-sdio.bin
-endef
-$(eval $(call BuildPackage,brcmfmac-firmware-43362-sdio))
-
-Package/brcmfmac-firmware-43430-sdio = $(call Package/firmware-default,Broadcom BCM43430 FullMac SDIO firmware)
-define Package/brcmfmac-firmware-43430-sdio/install
-	$(INSTALL_DIR) $(1)/lib/firmware/brcm
-	$(INSTALL_DATA) \
-		$(PKG_BUILD_DIR)/brcm/brcmfmac43430-sdio.bin \
-		$(1)/lib/firmware/brcm/brcmfmac43430-sdio.bin
-endef
-$(eval $(call BuildPackage,brcmfmac-firmware-43430-sdio))
-
 Package/brcmfmac-firmware-43430-sdio-rpi-3b = $(call Package/firmware-default,Broadcom BCM43430 NVRAM for Raspberry Pi 3B)
 define Package/brcmfmac-firmware-43430-sdio-rpi-3b/install
 	$(INSTALL_DIR) $(1)/lib/firmware/brcm
@@ -78,15 +60,6 @@ define Package/brcmfmac-firmware-43430a0-sdio/install
 		$(1)/lib/firmware/brcm/brcmfmac43430a0-sdio.bin
 endef
 $(eval $(call BuildPackage,brcmfmac-firmware-43430a0-sdio))
-
-Package/brcmfmac-firmware-43455-sdio = $(call Package/firmware-default,Broadcom BCM43455 FullMac SDIO firmware)
-define Package/brcmfmac-firmware-43455-sdio/install
-	$(INSTALL_DIR) $(1)/lib/firmware/brcm
-	$(INSTALL_DATA) \
-		$(PKG_BUILD_DIR)/brcm/brcmfmac43455-sdio.bin \
-		$(1)/lib/firmware/brcm/brcmfmac43455-sdio.bin
-endef
-$(eval $(call BuildPackage,brcmfmac-firmware-43455-sdio))
 
 Package/brcmfmac-firmware-43455-sdio-rpi-3b-plus = $(call Package/firmware-default,Broadcom BCM43455 NVRAM for Raspberry Pi 3B+)
 define Package/brcmfmac-firmware-43455-sdio-rpi-3b-plus/install
@@ -145,3 +118,13 @@ define Package/bnx2x-firmware/install
 		$(1)/lib/firmware/bnx2x/
 endef
 $(eval $(call BuildPackage,bnx2x-firmware))
+
+Package/station-p2-firmware = $(call Package/firmware-default,Broadcom FullMac SDIO firmware)
+define Package/station-p2-firmware/install
+	$(INSTALL_DIR) $(1)/lib/firmware/brcm
+	$(INSTALL_DATA) ./brcm_firmware/ap6275s/BCM4362A2.hcd $(1)/lib/firmware/brcm/BCM4362A2.hcd
+	$(INSTALL_DATA) ./brcm_firmware/ap6275s/clm_bcm43752a2_ag.blob $(1)/lib/firmware/brcm/brcmfmac43752-sdio.clm_blob
+	$(INSTALL_DATA) ./brcm_firmware/ap6275s/fw_bcm43752a2_ag_apsta.bin $(1)/lib/firmware/brcm/brcmfmac43752-sdio.firefly,rk3568-roc-pc.bin
+	$(INSTALL_DATA) ./brcm_firmware/ap6275s/nvram_ap6275s.txt $(1)/lib/firmware/brcm/brcmfmac43752-sdio.firefly,rk3568-roc-pc.txt
+endef
+$(eval $(call BuildPackage,station-p2-firmware))

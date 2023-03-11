@@ -1,9 +1,6 @@
+# SPDX-License-Identifier: GPL-2.0-only
 #
 # Copyright (C) Jiang Yutang <jiangyutang1978@gmail.com>
-#
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
 
 define KernelPackage/ahci-qoriq
   SUBMENU:=$(BLOCK_MENU)
@@ -25,7 +22,7 @@ define KernelPackage/ppfe
   SUBMENU:=$(NETWORK_DEVICES_MENU)
   TITLE:=Freescale PPFE Driver support
   DEPENDS:=@TARGET_layerscape
-  KCONFIG:=CONFIG_FSL_PPFE=y \
+  KCONFIG:=CONFIG_FSL_PPFE \
   	CONFIG_FSL_PPFE_UTIL_DISABLED=y
   FILES:=$(LINUX_DIR)/drivers/staging/fsl_ppfe/pfe.ko
   AUTOLOAD:=$(call AutoLoad,35,pfe)

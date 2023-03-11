@@ -8,22 +8,21 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ethtool
-PKG_VERSION:=5.4
+PKG_VERSION:=6.0
 PKG_RELEASE:=1
 
 PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=@KERNEL/software/network/ethtool
-PKG_HASH:=22f81e4927d6eb6a13a259d705248a96005fce2005e15257f639f5a1c8c52b6b
+PKG_HASH:=d5446c93de570ce68f3b1ea69dbfa12fcfd67fc19897f655d3f18231e2b818d6
 
 PKG_LICENSE:=GPL-2.0
 PKG_LICENSE_FILES:=COPYING
+PKG_CPE_ID:=cpe:/a:kernel:ethtool
 
 PKG_FIXUP:=autoreconf
 PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=1
-
-PKG_CONFIG_DEPENDS:=CONFIG_ETHTOOL_PRETTY_DUMP
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -32,6 +31,17 @@ define Package/ethtool
   CATEGORY:=Network
   TITLE:=Display or change ethernet card settings
   URL:=http://www.kernel.org/pub/software/network/ethtool/
+  VARIANT:=tiny
+  CONFLICTS:=ethtool-full
+endef
+
+define Package/ethtool-full
+  $(Package/ethtool)
+  TITLE += (full)
+  VARIANT:=full
+  PROVIDES:=ethtool
+  DEPENDS:=+libmnl
+  CONFLICTS:=
 endef
 
 define Package/ethtool/description
@@ -39,16 +49,12 @@ define Package/ethtool/description
  network interface
 endef
 
-define Package/ethtool/config
-	config ETHTOOL_PRETTY_DUMP
-		depends on PACKAGE_ethtool
-		bool "Enable pretty printing"
-endef
+Package/ethtool-full/description:=$(Package/ethtool/description)
 
-ifeq ($(CONFIG_ETHTOOL_PRETTY_DUMP),y)
-CONFIGURE_ARGS += --enable-pretty-dump
+ifeq ($(BUILD_VARIANT),full)
+CONFIGURE_ARGS += --enable-netlink --enable-pretty-dump
 else
-CONFIGURE_ARGS += --disable-pretty-dump
+CONFIGURE_ARGS += --disable-netlink --disable-pretty-dump
 endif
 
 define Package/ethtool/install
@@ -56,4 +62,7 @@ define Package/ethtool/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ethtool $(1)/usr/sbin
 endef
 
+Package/ethtool-full/install=$(Package/ethtool/install)
+
 $(eval $(call BuildPackage,ethtool))
+$(eval $(call BuildPackage,ethtool-full))

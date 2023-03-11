@@ -1,9 +1,6 @@
+# SPDX-License-Identifier: GPL-2.0-only
 #
-# Copyright (C) 2006-2015 OpenWrt.org
-#
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
+# Copyright (C) 2006-2020 OpenWrt.org
 
 ifneq ($(__prereq_inc),1)
 __prereq_inc:=1
@@ -52,7 +49,7 @@ endef
 
 define RequireCommand
   define Require/$(1)
-    which $(1)
+    command -v $(1)
   endef
 
   $$(eval $$(call Require,$(1),$(2)))
@@ -61,6 +58,18 @@ endef
 define RequireHeader
   define Require/$(1)
     [ -e "$(1)" ]
+  endef
+
+  $$(eval $$(call Require,$(1),$(2)))
+endef
+
+# 1: header to test
+# 2: failure message
+# 3: optional compile time test
+# 4: optional link library test (example -lncurses)
+define RequireCHeader
+  define Require/$(1)
+    echo 'int main(int argc, char **argv) { $(3); return 0; }' | gcc -include $(1) -x c -o $(TMP_DIR)/a.out - $(4)
   endef
 
   $$(eval $$(call Require,$(1),$(2)))
@@ -106,7 +115,7 @@ define SetupHostCommand
 	           $(call QuoteHostCommand,$(11)) $(call QuoteHostCommand,$(12)); do \
 		if [ -n "$$$$$$$$cmd" ]; then \
 			bin="$$$$$$$$(PATH="$(subst $(space),:,$(filter-out $(STAGING_DIR_HOST)/%,$(subst :,$(space),$(PATH))))" \
-				which "$$$$$$$${cmd%% *}")"; \
+				command -v "$$$$$$$${cmd%% *}")"; \
 			if [ -x "$$$$$$$$bin" ] && eval "$$$$$$$$cmd" >/dev/null 2>/dev/null; then \
 				mkdir -p "$(STAGING_DIR_HOST)/bin"; \
 				ln -sf "$$$$$$$$bin" "$(STAGING_DIR_HOST)/bin/$(strip $(1))"; \

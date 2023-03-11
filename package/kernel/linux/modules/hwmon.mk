@@ -43,20 +43,6 @@ endef
 
 $(eval $(call KernelPackage,hwmon-ad7418))
 
-define KernelPackage/hwmon-ads1015
-  TITLE:=Texas Instruments ADS1015
-  KCONFIG:= CONFIG_SENSORS_ADS1015
-  FILES:= $(LINUX_DIR)/drivers/hwmon/ads1015.ko
-  AUTOLOAD:=$(call AutoLoad,60,ads1015)
-  $(call AddDepends/hwmon,+kmod-i2c-core)
-endef
-
-define KernelPackage/hwmon-ads1015/description
- Kernel module for Texas Instruments ADS1015 Analog-to-Digital converter
-endef
-
-$(eval $(call KernelPackage,hwmon-ads1015))
-
 define KernelPackage/hwmon-adt7410
   TITLE:=ADT7410 monitoring support
   KCONFIG:= \
@@ -439,6 +425,21 @@ define KernelPackage/hwmon-sht21/description
 endef
 
 $(eval $(call KernelPackage,hwmon-sht21))
+
+
+define KernelPackage/hwmon-sht3x
+  TITLE:=Sensiron SHT3x and compat. monitoring support
+  KCONFIG:=CONFIG_SENSORS_SHT3x
+  FILES:=$(LINUX_DIR)/drivers/hwmon/sht3x.ko
+  AUTOLOAD:=$(call AutoProbe,sht3x)
+  $(call AddDepends/hwmon,+kmod-i2c-core +kmod-lib-crc8)
+endef
+
+define KernelPackage/hwmon-sht3x/description
+ Kernel module for Sensirion SHT3x temperature and humidity sensors chip
+endef
+
+$(eval $(call KernelPackage,hwmon-sht3x))
 
 
 define KernelPackage/hwmon-tmp102

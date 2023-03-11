@@ -1,6 +1,6 @@
 --- a/configure
 +++ b/configure
-@@ -315,7 +315,7 @@ EOF
+@@ -470,7 +470,7 @@ EOF
  
  check_cap()
  {

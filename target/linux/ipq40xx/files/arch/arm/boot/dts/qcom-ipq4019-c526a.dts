@@ -6,7 +6,6 @@
 #include <dt-bindings/soc/qcom,tcsr.h>
 
 / {
-
 	model = "HiWiFi C526A";
 	compatible = "hiwifi,c526a";
 
@@ -89,12 +88,12 @@
 		compatible = "gpio-leds";
 
 		led_sys: blue {
-			label = "c526a:blue:sys";
+			label = "blue:sys";
 			gpios = <&tlmm 36 GPIO_ACTIVE_LOW>;
 		};
 
 		led_boot: red {
-			label = "c526a:red:sys";
+			label = "red:sys";
 			gpios = <&tlmm 40 GPIO_ACTIVE_LOW>;
 			panic-indicator;
 		};
@@ -236,17 +235,7 @@
 
 			partition@0 {
 				label = "ubi";
-				reg = <0x0 0x2c00000>;
-			};
-
-			partition@2c00000 {
-				label = "hiwifi_rootfs";
-				reg = <0x2c00000 0x2c00000>;
-			};
-
-			partition@5800000 {
-				label = "hiwifi_opt";
-				reg = <0x5800000 0x2800000>;
+				reg = <0x0 0x8000000>;
 			};
 		};
 	};

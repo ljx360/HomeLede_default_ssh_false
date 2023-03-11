@@ -13,7 +13,7 @@ PKG_VERSION:=5.10.56.27.3
 PKG_RELEASE:=10
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)_$(ARCH).tar.bz2
-PKG_SOURCE_URL:=http://downloads.openwrt.org/sources
+PKG_SOURCE_URL:=@OPENWRT
 
 ifeq ($(ARCH),mipsel)
 PKG_HASH:=26a8c370f48fc129d0731cfd751c36cae1419b0bc8ca35781126744e60eae009
@@ -99,8 +99,7 @@ define Package/nas/description
  proprietary Broadcom wl driver.
 endef
 
-MAKE_KMOD := $(MAKE) -C "$(LINUX_DIR)" \
-		$(KERNEL_MAKE_FLAGS) \
+MAKE_KMOD := $(KERNEL_MAKE) \
 		PATH="$(TARGET_PATH)" \
 		M="$(PKG_BUILD_DIR)/kmod" \
 
